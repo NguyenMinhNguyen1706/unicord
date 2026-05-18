@@ -110,7 +110,7 @@ export const InitialModal = () => {
                           <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-700 p-4">
                             <FileUpload
                               endpoint="serverImage"
-                              value={field.value}
+                              value={field.value || ""}
                               onChange={field.onChange}
                             />
                           </div>
