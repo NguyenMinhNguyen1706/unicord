@@ -137,7 +137,7 @@ export const InitialModal = () => {
                       <FormControl>
                         <Input
                           disabled={isLoading}
-                          className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-foreground placeholder-slate-400 focus:border-primary focus:ring-primary/50 rounded-lg transition-all duration-200 font-medium"
+                          className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-black dark:text-white placeholder-slate-400 focus:border-primary focus:ring-primary/50 rounded-lg transition-all duration-200 font-medium"
                           placeholder="Nhập tên Server của bạn"
                           {...field}
                         />
