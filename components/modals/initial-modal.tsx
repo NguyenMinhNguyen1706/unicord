@@ -33,9 +33,7 @@ const formSchema = z.object({
   name: z.string().min(1, {
     message: "Tên Server không được để trống.",
   }),
-  imageUrl: z.string().min(1, {
-    message: "Vui lòng tải lên ảnh đại diện cho Server.",
-  })
+  imageUrl: z.string().optional()
 });
 
 export const InitialModal = () => {

@@ -9,6 +9,7 @@ import { MemberRole } from "@/enums";;
 export async function POST(req: Request) {
   try {
     const { name, imageUrl } = await req.json();
+    const finalImageUrl = imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=256`;
     const user = await currentUser();
 
     if (!user) {
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
       data: {
         profileId: profile.id,
         name,
-        imageUrl,
+        imageUrl: finalImageUrl,
         inviteCode: uuidv4(),
         templateType: "university",
         channels: {
