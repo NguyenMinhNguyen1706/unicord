@@ -1,0 +1,181 @@
+// UniCord - Nền tảng giao tiếp học thuật theo kênh
+// Schema cho MySQL database
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Hồ sơ người dùng
+model Profile {
+  id       String @id @default(uuid())
+  userId   String @unique
+  name     String
+  imageUrl String
+  email    String
+
+  servers  Server[]
+  members  Member[]
+  channels Channel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+// 3. Bảng Server (Lớp học / Khóa học)
+model Server {
+  id           String  @id @default(uuid())
+  name         String
+  imageUrl     String
+  inviteCode   String  @unique
+  templateType String  @default("university") // university, study-group, club
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  members   Member[]
+  channels  Channel[]
+  deadlines Deadline[]
+  messages  Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+}
+
+// 4. Bảng Thành viên trong Server
+model Member {
+  id   String     @id @default(uuid())
+  role String @default("STUDENT")
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  serverId String
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  messages       Message[]
+  directMessages DirectMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([serverId])
+}
+
+
+
+// 6. Bảng Kênh (Channel) trong Server
+model Channel {
+  id       String      @id @default(uuid())
+  name     String
+  type     String @default("TEXT")
+  position Int         @default(0)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  serverId String
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([serverId])
+}
+
+// 7. Bảng Tin nhắn
+model Message {
+  id      String @id @default(uuid())
+  content String
+
+  fileUrl String?
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  channelId String
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  serverId String
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  pinned  Boolean @default(false)
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([channelId])
+  @@index([memberId])
+  @@index([serverId])
+}
+
+
+
+model Deadline {
+  id          String         @id @default(uuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  status      String @default("UPCOMING")
+  weight      String?        // Điểm số (e.g. "20%")
+
+  serverId String
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  createdById String // profileId of the teacher who created it
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serverId])
+  @@index([createdById])
+}
+
+// 9. Tin nhắn trực tiếp (Direct Messages)
+model Conversation {
+  id String @id @default(uuid())
+
+  memberOneId String
+  memberTwoId String
+
+  directMessages DirectMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([memberOneId, memberTwoId])
+  @@index([memberTwoId])
+}
+
+model DirectMessage {
+  id      String  @id @default(uuid())
+  content String
+  fileUrl String?
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([memberId])
+  @@index([conversationId])
+}
