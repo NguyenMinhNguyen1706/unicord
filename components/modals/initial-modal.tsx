@@ -153,6 +153,7 @@ export const InitialModal = () => {
                   variant="outline"
                   className="flex-1 rounded-lg border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
                   type="button"
+                  onClick={() => form.reset()}
                 >
                   Hủy
                 </Button>
