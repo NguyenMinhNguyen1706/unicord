@@ -5,13 +5,6 @@ import { Command as CommandPrimitive } from "cmdk"
 
 import { cn } from "@/lib/utils"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
   InputGroup,
   InputGroupAddon,
 } from "@/components/ui/input-group"
@@ -38,32 +31,34 @@ function CommandDialog({
   description = "Search for a command to run...",
   children,
   className,
-  showCloseButton = false,
+  open,
+  onOpenChange,
   ...props
-}: React.ComponentProps<typeof Dialog> & {
+}: {
   title?: string
   description?: string
   className?: string
-  showCloseButton?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  children?: React.ReactNode
 }) {
   return (
-    <Dialog {...props}>
-      <DialogContent
-        className={cn(
-          "top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0",
-          className
-        )}
-        showCloseButton={showCloseButton}
-      >
-        <DialogHeader className="sr-only">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+    <CommandPrimitive.Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+      label={title}
+      {...props}
+    >
+      <div className="fixed inset-0 z-50 bg-black/50" onClick={() => onOpenChange?.(false)} />
+      <div className={cn(
+        "fixed left-[50%] top-[30%] z-50 w-full max-w-lg translate-x-[-50%] rounded-xl border bg-popover p-0 shadow-lg",
+        className
+      )}>
+        <Command className="rounded-xl">
           {children}
         </Command>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </CommandPrimitive.Dialog>
   )
 }
 
