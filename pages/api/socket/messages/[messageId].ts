@@ -1,6 +1,6 @@
 import { NextApiRequest } from "next";
 import { NextApiResponseServerIo } from "@/types/server-socket";
-import { currentUser } from "@clerk/nextjs/server";
+import { getAuth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { MemberRole } from "@/enums";
 
@@ -13,16 +13,16 @@ export default async function handler(
   }
 
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     const { messageId, serverId, channelId } = req.query;
     const { content } = req.body;
 
-    if (!user) return res.status(401).json({ error: "Unauthorized" });
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
     if (!serverId) return res.status(400).json({ error: "Server ID missing" });
     if (!channelId) return res.status(400).json({ error: "Channel ID missing" });
 
     const profile = await db.profile.findUnique({
-      where: { userId: user.id },
+      where: { userId },
     });
 
     if (!profile) return res.status(401).json({ error: "Profile not found" });
