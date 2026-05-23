@@ -12,12 +12,16 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "ui-avatars.com", // Avatar tự tạo khi không upload ảnh
+        hostname: "ui-avatars.com",
       },
       {
         protocol: "https",
-        hostname: "img.clerk.com", // Clerk user avatars
-      }
+        hostname: "img.clerk.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ]
   }
 };
